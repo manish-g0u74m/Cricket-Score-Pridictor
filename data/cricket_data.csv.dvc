@@ -1,0 +1,5 @@
+outs:
+- md5: 0ba7de8e2a866115985d116f2d03c97a
+  size: 1849
+  hash: md5
+  path: cricket_data.csv

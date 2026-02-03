@@ -1,0 +1,4 @@
+[core]
+    remote = my-remote-data
+['remote "my-remote-data"']
+    url = s3://mlops-cricket-data/cricket_data
