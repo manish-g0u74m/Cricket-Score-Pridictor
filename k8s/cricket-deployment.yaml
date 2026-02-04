@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cricket-deployment
+  namespace: cricket-ml
+  labels:
+    app: cricket-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cricket-app
+  template:
+    metadata:
+      labels:
+        app: cricket-app
+    spec:
+      containers:
+      - name: cricket-container
+        image: g0u74m/cricket-ml:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m" 

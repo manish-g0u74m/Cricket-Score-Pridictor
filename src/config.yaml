@@ -1,0 +1,37 @@
+# Data Configuration
+
+data:
+  path: data/cricket_data.csv
+  target: final_score
+
+# Train Configuration
+
+train:
+  test_size: 0.2
+  random_state: 42
+
+# Model Configuration
+
+model:
+  name: linear_regression
+  save_dir: models
+  base_filename: model
+
+# MLflow Configuration
+
+mlflow:
+  tracking_uri: sqlite:///mlflow.db
+  experiment_name: cricket_score_prediction
+
+# Versioning Rules
+
+versioning:
+  enabled: true
+  latest_model_name: latest_model.pkl
+
+# Metadata (Optional but Pro)
+
+metadata:
+  author: Manish
+  project: cricket_score_prediction
+  framework: sklearn

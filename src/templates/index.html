@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cricket Score Predictor</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; }
+        .container { width: 900px; margin: 40px auto; }
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .btn-row {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        input { width: 100%; padding: 8px; margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #999; padding: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align:center;">Cricket Final Score Predictor</h1>
+
+    <!-- 🔘 NAVIGATION BUTTONS -->
+    <div class="btn-row">
+        <a href="/realtime"><button>🎯 Real-Time Serving</button></a>
+        <a href="/batch"><button>📦 Batch Serving</button></a>
+    </div>
+
+    <!-- 🎯 REAL-TIME SECTION -->
+    {% if page == "realtime" %}
+    <div class="box">
+        <h2>Real-Time Prediction</h2>
+
+        <form method="post" action="/predict">
+            <input type="number" step="0.1" name="overs" placeholder="Overs" required>
+            <input type="number" name="runs" placeholder="Runs" required>
+            <input type="number" name="wickets" placeholder="Wickets" required>
+            <input type="number" name="runs_last_5" placeholder="Runs in last 5 overs" required>
+            <input type="number" name="wickets_last_5" placeholder="Wickets in last 5 overs" required>
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if realtime_prediction %}
+            <h3>Predicted Final Score: {{ realtime_prediction }}</h3>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 📦 BATCH SECTION -->
+    {% if page == "batch" %}
+    <div class="box">
+        <h2>Batch Prediction</h2>
+
+        <form method="post" action="/batch-predict" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">Upload & Predict</button>
+        </form>
+
+        {% if batch_result %}
+            <h3>Batch Output</h3>
+            {{ batch_result | safe }}
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: service
+metadata:
+  name: cricket-service
+  namespace: cricket-ml
+spec:
+  selector:
+    app: cricket-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer
