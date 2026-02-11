@@ -1,9 +1,14 @@
 name: ML Model CI/CD
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'models/**'
 
 jobs:
   build-train-push:
@@ -13,7 +18,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # required for pushing back
+          token: ${{ secrets.TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,7 +38,6 @@ jobs:
           source venv/bin/activate
           python src/train.py
 
-      # 🔥 IMPORTANT STEP
       - name: Commit and Push New Model
         run: |
           git config user.name "github-actions"
@@ -54,28 +59,23 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
-
+            ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:${{ github.sha }}
 
   deploy-to-kind:
     needs: build-train-push
-    # IMPORTANT: You must install a self-hosted runner on your local VM 
-    # and tag it with 'self-hosted'
-    runs-on: self-hosted 
+    runs-on: self-hosted
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Kubeconfig
-        run: |
-          # This assumes your runner user has access to ~/.kube/config
-          kubectl cluster-info 
+      - name: Verify Cluster
+        run: kubectl cluster-info
 
-      - name: Deploy to KServe / Kubernetes
+      - name: Deploy to Kubernetes
         run: |
-          # Apply your K8s manifests
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/cricket-deployment.yaml
-          
-          # Force a restart to pull the latest image if tag is constant
-          kubectl rollout restart deployment cricket-deployment
+
+          kubectl rollout restart deployment cricket-deployment -n cricket-ml
