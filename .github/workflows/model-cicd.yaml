@@ -9,7 +9,46 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    steps:name: Cricket CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-train-push:
+    runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Create Virtual Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r src/requirements-train.txt
+
+      - name: Run Training
+        run: |
+          source venv/bin/activate
+          python src/train.py
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -24,7 +63,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: your-docker-username/cricket-predictor:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
 
   deploy-to-kind:
     needs: build-and-push
@@ -43,6 +82,7 @@ jobs:
       - name: Deploy to KServe / Kubernetes
         run: |
           # Apply your K8s manifests
+          kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/cricket-deployment.yaml
           
