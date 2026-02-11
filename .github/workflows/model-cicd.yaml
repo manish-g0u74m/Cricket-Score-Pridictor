@@ -55,7 +55,7 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
 
   deploy-to-kind:
-    needs: build-and-push
+    needs: build-train-push
     # IMPORTANT: You must install a self-hosted runner on your local VM 
     # and tag it with 'self-hosted'
     runs-on: self-hosted 

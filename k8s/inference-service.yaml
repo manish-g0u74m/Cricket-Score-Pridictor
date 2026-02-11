@@ -1,0 +1,19 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: cricket-ml
+  namespace: cricket-ml
+spec:
+  predictor:
+    containers:
+      - name: cricket-container
+        image: g0u74m/cricket-ml:latest
+        ports:
+          - containerPort: 5000
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: "0.5"
+            memory: "256Mi"

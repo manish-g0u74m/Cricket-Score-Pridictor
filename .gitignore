@@ -1,5 +1,5 @@
 .venv
 mlflow.db
 mlruns/
-/models
+
 src/__pycache__/
