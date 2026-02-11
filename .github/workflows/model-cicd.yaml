@@ -12,13 +12,15 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # required for pushing back
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Create Virtual Environment
+      - name: Install Training Dependencies
         run: |
           python -m venv venv
           source venv/bin/activate
@@ -30,16 +32,14 @@ jobs:
           source venv/bin/activate
           python src/train.py
 
-      - name: Build Docker Image
+      # 🔥 IMPORTANT STEP
+      - name: Commit and Push New Model
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest .
-
-      - name: Push Docker Image
-        run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
-
-      - name: Checkout Code
-        uses: actions/checkout@v4
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add models/
+          git commit -m "Auto-update model [skip ci]" || echo "No changes"
+          git push origin main
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -52,7 +52,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/cricket-ml:latest
+
 
   deploy-to-kind:
     needs: build-train-push
