@@ -78,4 +78,4 @@ jobs:
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/cricket-deployment.yaml
 
-          kubectl rollout restart deployment cricket-deployment -n cricket-ml
+          kubectl rollout restart deployment cricket-ml -n cricket-ml
