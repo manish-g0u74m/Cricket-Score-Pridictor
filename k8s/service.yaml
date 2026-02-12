@@ -4,10 +4,10 @@ metadata:
   name: cricket-ml-service
   namespace: cricket-ml
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: cricket-ml
   ports:
     - port: 80
       targetPort: 5000
-      nodePort: 30007
+
