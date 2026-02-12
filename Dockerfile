@@ -2,7 +2,7 @@ FROM python:3.9-slim
 WORKDIR /app
 COPY src/requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
-COPY models/ models/                   # this is not right to copy model in dockerfile
+COPY models/ models/                
 COPY src/main.py .
 COPY src/templates templates
 EXPOSE 5000
